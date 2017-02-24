@@ -1,0 +1,91 @@
+<!doctype html>
+<title>Linking to Data Table</title>
+<link rel="stylesheet" type="text/css" href="d3.parcoords.css">
+<link rel="stylesheet" type="text/css" href="style.css">
+<style>
+    /* data table styles */
+    #grid { height: 198px; }
+    .row, .header { clear: left; font-size: 12px; line-height: 18px; height: 18px; }
+    .row:nth-child(odd) { background: rgba(0,0,0,0.05); }
+    .header { font-weight: bold; }
+    .cell { float: left; overflow: hidden; white-space: nowrap; width: 100px; height: 18px; }
+    .col-0 { width: 180px; }
+</style>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3.parcoords.js"></script>
+<script src="divgrid.js"></script>
+<div id="par" class="parcoords" style="height:200px;"></div>
+<div id="grid"></div>
+<script id="brushing">// quantitative color scale
+var blue_to_brown = d3.scale.linear()
+    .domain([0, 8])
+    .range(["steelblue", "brown"])
+    .interpolate(d3.interpolateLab);
+
+var color = function(d) { return blue_to_brown(d[2008]); };
+
+var parcoords = d3.parcoords()("#par")
+    .color(color)
+    .alpha(0.6);
+
+// load csv file and create the chart
+d3.csv('us1.csv', function(data) {
+    var years=[2008,2009,2010,2011,2012,2013,2014,2015];
+    var arr=[];
+     data.forEach(function (d) {
+         if(parseInt(d.iyear)>=2008){
+             var flag1=true;
+             for (var i = 0; i < arr.length; i++) {
+                 if(arr[i].state==d.provstate){
+                     arr[i][parseInt(d.iyear)]+=1;
+                     arr[i].sum+=1;
+                     flag1=false;
+                     break;
+                 }
+             }
+             if(flag1){
+                 var t={};
+                 t.state = d.provstate;
+                 for (var i = 0; i < years.length; i++){
+                     t[years[i]]=0;
+                 }
+                 t[parseInt(d.iyear)]+=1;
+                 t.sum=1;
+                 arr.push(t)
+             }
+         }
+     });
+    arr.sort(function(a, b) {
+        return -(parseInt(a.sum) - parseInt(b.sum));
+    });
+    console.log(arr);
+    parcoords
+        .data(arr)
+        .hideAxis(["state","sum"])
+        .render()
+        .brushMode("1D-axes");  // enable brushing
+
+    // create data table, row hover highlighting
+    var grid = d3.divgrid().columns(["state", 2008,2009,2010,2011,2012,2013,2014,2015]);
+    d3.select("#grid")
+        .datum(arr.slice(0,10))
+        .call(grid)
+        .selectAll(".row")
+        .on({
+            "mouseover": function(d) { parcoords.highlight([d]) },
+            "mouseout": parcoords.unhighlight
+        });
+
+    // update data table on brush event
+    parcoords.on("brush", function(d) {
+        d3.select("#grid")
+            .datum(d.slice(0,10))
+            .call(grid)
+            .selectAll(".row")
+            .on({
+                "mouseover": function(d) { parcoords.highlight([d]) },
+                "mouseout": parcoords.unhighlight
+            });
+    });
+});
+</script>
