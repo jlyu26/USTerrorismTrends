@@ -1,223 +1,356 @@
 <!doctype html>
 <html class="no-js" lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>U.S. Terrorism Trends</title>
     <link rel="stylesheet" href="foundation.min.css">
-	<style>
-		
-		#chart {
-		    max-width: 800px;
-		    width: 100%;
-		    margin: 0 auto;
-		}
+    <style>
 
-		svg {
-		    font: 1em Consolas;
-		    shape-rendering: crispEdges;
-		}
+        #chart {
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
 
-		/* CSS that makes chart responsive */
+        svg {
+            font: 1em Consolas;
+            shape-rendering: crispEdges;
+        }
 
-		#svg-container {
-		    position: relative;
-		    width: 100%;
-		    overflow: hidden;
-		}
+        /* CSS that makes chart responsive */
 
-		.svg-content-responsive {
-		    position: absolute;
-		    top: 0;
-		    left: 0;
-		}
+        #svg-container {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+        }
 
-	</style>
+        .svg-content-responsive {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        /* Map CSS */
+
+        .background {
+            fill: none;
+            pointer-events: all;
+        }
+
+        .feature {
+            fill: #ccc;
+            cursor: pointer;
+        }
+
+        .feature.active {
+            fill: orange;
+        }
+
+        .mesh {
+            fill: none;
+            stroke: #fff;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+    </style>
 
     <script src="https://d3js.org/d3.v3.min.js"></script>
-  </head>
-  <body>
-    
-    <!-- Start Top Bar -->
-    <div class="top-bar">
-      <div class="top-bar-title">
+    <script src="//d3js.org/topojson.v1.min.js"></script>
+</head>
+<body>
+
+<!-- Start Top Bar -->
+<div class="top-bar">
+    <div class="top-bar-title">
 	      <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
 	        <button class="menu-icon dark" type="button" data-toggle></button>
 	      </span>
-	    </div>
-	  <div id="responsive-menu">
-	      <div class="top-bar-left">
-	        <ul class="dropdown menu" data-dropdown-menu>
-	            <li><a href="#">INTRODUCTION</a></li>
-            </ul>
-	      </div>
-	      <div class="top-bar-right">
-	        <ul class="menu">
-	          <li><a href="#">OVERVIEW</a></li>
-	          <li><a href="#">DETAILS</a></li>
-	          <li><a href="#">CONCLUSION</a></li>
-	        </ul>
-	      </div>
-	    </div>
     </div>
-    <!-- End Top Bar -->
+    <div id="responsive-menu">
+        <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+                <li><a href="#">INTRODUCTION</a></li>
+            </ul>
+        </div>
+        <div class="top-bar-right">
+            <ul class="menu">
+                <li><a href="#">OVERVIEW</a></li>
+                <li><a href="#">DETAILS</a></li>
+                <li><a href="#">CONCLUSION</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<!-- End Top Bar -->
 
-    <div class="callout large">
-      <div class="row column text-center">
+<div class="callout large">
+    <div class="row column text-center">
         <h1>U.S. Terrorism Trends</h1>
         <p class="lead">A data visualization work to reveal the truth of Terrorism in U.S.</p>
         <a href="#" class="button large">GET START</a>
-      </div>
     </div>
-    
-    <div class="row">
-      <div class="small-13 small-centered columns">
+</div>
+
+<div class="row">
+    <div class="small-13 small-centered columns">
         <h2>INTRODUCTION</h2>
-        <p>此处替换为一段项目简介，右侧图片替换成演示录像。随便弄了个16：9的占位符，咱们是不是要把录像传到YouTube上啊... Vivamus luctus urna sed urna ultricies ac tempor dui sagittis. In condimentum facilisis porta. Sed nec diam eu diam mattis viverra. Nulla fringilla, orci ac euismod semper, magna diam porttitor mauris, quis sollicitudin sapien justo in libero. Vestibulum mollis mauris enim. Morbi euismod magna ac lorem rutrum elementum. Donec viverra auctor.</p>
-      </div>
-      <div class="small-13 small-centered columns text-center">
-        <img class="thumbnail" src="http://placehold.it/720x405">
-      </div>
+        <p>This section is a video about the project. Why we did this, why this is important, etc.</p>
     </div>
+    <div class="small-13 small-centered columns text-center">
+        <img class="thumbnail" src="http://placehold.it/720x405">
+    </div>
+</div>
 
-    <hr>
+<hr>
 
-    <div class="row">
-      <div class="medium-6 columns medium-push-6">
-        <img class="thumbnail" src="http://placehold.it/640x360"> <!-- 把img标签替换成<div id="overview"></div> -->
+<div class="row">
+    <div class="medium-6 columns medium-push-6">
+        <!-- <img class="thumbnail" src="overview.png"> 把img标签替换成<div id="overview"></div> -->
+        <div id="map"></div>
         <hr>
         <div class="row column">
-          <ul class="vertical medium-horizontal menu expanded text-center">
-            <li><div class="stat">20</div><span>Years</span></li>
-            <li><div class="stat">495</div><span>Attacks</span></li>
-            <li><div class="stat">**</div><span>Cities</span></li>
-            <li><div class="stat">****</div><span>Deaths</span></li>
-          </ul>
+            <ul class="vertical medium-horizontal menu expanded text-center">
+                <li>
+                    <div class="stat">20</div>
+                    <span>Years</span></li>
+                <li>
+                    <div class="stat">495</div>
+                    <span>Attacks</span></li>
+                <li>
+                    <div class="stat">**</div>
+                    <span>Cities</span></li>
+                <li>
+                    <div class="stat">****</div>
+                    <span>Deaths</span></li>
+            </ul>
         </div>
         <hr>
-      </div>
-      <div class="medium-6 columns medium-pull-6">
+    </div>
+    <div class="medium-6 columns medium-pull-6">
         <h2>OVERVIEW</h2>
-        <p>这边我觉得可以放一个20年数据总览的图，x轴是年份，y轴是袭击事件数量，把Attack Type也表示出来，一共9种，可以用line chart，hover年份有平行于y轴的标尺，跟line的节点高亮，动态提示条显示该年份不同type的数据和total。 Vivamus luctus urna sed urna ultricies ac tempor dui sagittis. In condimentum facilisis porta. Sed nec diam eu diam mattis viverra. Nulla fringilla, orci ac euismod semper, magna diam porttitor mauris, quis sollicitudin sapien justo in libero. Vestibulum mollis mauris enim. Morbi euismod magna ac lorem rutrum elementum. Donec viverra auctor.</p>
-      </div>
+        <p>This section shows the overall attack information of the past 20 years (1996-2015). Cities attacked are presented with red circles. More to add:<br>1. Circle size for damage (property damage and injuries/death in different color, as interactive function);
+        <br>2. Drag bar to select years
+        <br>3. Hover/click circle show attack information as interactive function.
+        </p>
     </div>
+</div>
 
-    <hr>
+<hr>
 
-    <div class="row">
-      <div class="small-13 small-centered columns">
-        <h2>ATTACT MAP</h2>
-        <p>这个位置可以做一个Map，把每个袭击事件都标出来。我看了一下造成大面积人员伤亡的不是很多见（911）那种，所以可以引进一个算法，根据袭击伤亡和财产损失等给出一个value，每个value用半径体现出来，不同type的袭击用不同颜色，和overview视图中的保持一致。Hover到每次袭击的圆圈上显示具体信息。如果可能的话把20年做成可以播放的动画那种，可以选择只显示某一种或者几种的type，或者不一定是type，weapon啊，motive啊都可以... 这个我可以试一试，先把图画出来再一个一个添加 😆... Vivamus luctus urna sed urna ultricies ac tempor dui sagittis. In condimentum facilisis porta. Sed nec diam eu diam mattis viverra. Nulla fringilla, orci ac euismod semper, magna diam porttitor mauris, quis sollicitudin sapien justo in libero. Vestibulum mollis mauris enim. Morbi euismod magna ac lorem rutrum elementum. Donec viverra auctor.</p>
-      </div>
-      <div class="small-13 small-centered columns text-center">
-        <img class="thumbnail" src="http://placehold.it/640x360"> <!-- 把img标签替换成<div id="map"></div> -->
-      </div>
-    </div>
-
-    <hr>
-
-    <div class="row">
-      <div class="medium-6 columns medium-push-6">
-        <img class="thumbnail" src="http://placehold.it/640x360"> <!-- 把img标签替换成<div id="detail"></div> -->
-      </div>
-      <div class="medium-6 columns medium-pull-6">
+<div class="row">
+    <div class="small-13 small-centered columns">
         <h2>DETAILS</h2>
-        <p>过滤之后的数据还需要把恐怖组织、target（机场啊学校啊之类的）、motive、weapon/weapon detail用chart表示出来，再把媒体报道中的关键词提取一下放在一个chart里，所以zhegedetail可以分两段，咱们周四前先写一个chart，后面的再慢慢加。</p>
-      </div>
+        <p>
+            This section is designed to show the overview of the attacks in 20 years (1996-2015), with some details, weapons and targets in particular. <br>The aim of this section is to show which weapons are highly dangerous and which places or buildings should strengthen security to prevent attack from happening. </p>
     </div>
+    <div class="small-13 small-centered columns text-center">
+        <img class="thumbnail" src="overview.png">
+        <!-- <img class="thumbnail" src="http://placehold.it/640x360">  -->
+    </div>
+</div>
 
-	<hr>
+<hr>
 
-    <div class="row">
-      <div class="small-13 small-centered columns">
+<div class="row">
+    <div class="medium-6 columns medium-push-6">
+        <img class="thumbnail" src="details.png"> <!-- 把img标签替换成<div id="detail"></div> -->
+    </div>
+    <div class="medium-6 columns medium-pull-6">
+        <h2>MORE DETAILS</h2>
+        <p>If time allows, we will put implement a force-directed graph or word cloud of keywords extracted from the  media coverage of these attacks, to see if there's deviation between the real data and public awareness.
+        <br> More charts coming soon...</p>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="small-13 small-centered columns">
         <h2>CONCLUSION</h2>
-        <p>最后一段写个结论，祝愿一下世界和平，应该就行了吧... Vivamus luctus urna sed urna ultricies ac tempor dui sagittis. In condimentum facilisis porta. Sed nec diam eu diam mattis viverra. Nulla fringilla, orci ac euismod semper, magna diam porttitor mauris, quis sollicitudin sapien justo in libero. Vestibulum mollis mauris enim. Morbi euismod magna ac lorem rutrum elementum. Donec viverra auctor.</p>
-      </div>
+        <p>This section is the conclusion of the project.</p>
     </div>
+</div>
 
-    <hr>
+<hr>
 
-    <div class="row column">
-      <ul class="menu">
+<div class="row column">
+    <ul class="menu">
         <li class="small-5 columns">Copyright © 各位的Github ID</li>
         <li class="small-7 columns">Worcester Polytechnic Institute CS573 Spring 2017</li>
-      </ul>
-    </div>
-    
-
-	<script>
-		
-	  console.log(d3);	// V3版的D3，看各位用得惯那个版本的吧，我都可以~
-
-	  var width = 500;
-	  var height = width;
-	  var img_w = width / 6;
-	  var img_h = height / 6;
-
-	  function getRatio(side) {
-	      return (( margin[side] / width ) * 100 + 1) + "%";
-	  }
-
-	  var margin = {left: 10, top: 10, right: 10, bottom: 10},
-	      width = 800,
-	      height = 800,
-	      marginRatio = {
-	          left: getRatio("left"),
-	          top: getRatio("top"),
-	          right: getRatio("right"),
-	          bottom: getRatio("bottom")
-	      };
+    </ul>
+</div>
 
 
-	  // overview
-	  var svg_overview = d3.select("#overview")
-	      .append("div")
-	      .attr("id", "svg-container")
-	      .append("svg")
-	      .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
-	      .attr("preserveAspectRatio", "xMinYMin meet")
-	      .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
-	      .attr("id", "svg-content-responsive");
+<script>
+
+    function getRatio(side) {
+        return (( margin[side] / width ) * 100 + 1) + "%";
+    }
+
+    var margin = {left: 10, top: 10, right: 10, bottom: 10},
+        width = 720,
+        height = 405,
+        marginRatio = {
+            left: getRatio("left"),
+            top: getRatio("top"),
+            right: getRatio("right"),
+            bottom: getRatio("bottom")
+        };
+
+
+    // overview
+    var svg_overview = d3.select("#overview")
+        .append("div")
+        .attr("id", "svg-container")
+        .append("svg")
+        .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
+        .attr("id", "svg-content-responsive");
+
+
+    // map
+    var svg_map = d3.select("#map")
+        .append("div")
+        .attr("id", "svg-container")
+        .append("svg")
+        .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
+        .attr("id", "svg-content-responsive");
+
+    var active = d3.select(null);
+
+    var projection = d3.geo.albersUsa()
+        .scale(1000)
+        .translate([width / 2, height / 2]);
+
+    var t = projection.translate(), // the projection's default translation
+        s = projection.scale(); // the projection's default scale
+
+    var path = d3.geo.path()
+        .projection(projection);
+
+    svg_map.append("rect")
+        .attr("class", "background")
+        .attr("width", width)
+        .attr("height", height)
+        .on("click", reset);
+
+    var g = svg_map.append("g")
+        .style("stroke-width", "1.5px");
+
+    d3.json("us.json", function (error, us) {
+        if (error) throw error;
+
+        g.selectAll("path")
+            .data(topojson.feature(us, us.objects.states).features)
+            .enter().append("path")
+            .attr("d", path)
+            .attr("class", "feature")
+            .on("click", clicked);
+
+        g.append("path")
+            .datum(topojson.mesh(us, us.objects.states, function (a, b) {
+                return a !== b;
+            }))
+            .attr("class", "mesh")
+            .attr("d", path);
+
+    });
+
+    d3.csv("dataset.csv", function (error, data) {
+        data.forEach(function (d) {
+            d.latitude = +d.latitude;
+            d.longitude = +d.longitude;
+        });
+
+        //插入分组元素
+        var location = svg_map.selectAll(".location")
+            .data(data)
+            .enter()
+            .append("circle")
+            .attr("class", "location")
+            .attr("class", "mark")
+            .attr("r", 7)
+            .attr("fill", "red")
+            .attr("style", "opacity: 0.3")
+            .attr("transform", function (d) {
+                return "translate(" + projection([d.longitude, d.latitude]) + ")";
+            });
+    })
+
+    function clicked(d) {
+        if (active.node() === this) return reset();
+        active.classed("active", false);
+        active = d3.select(this).classed("active", true);
+
+        var bounds = path.bounds(d),
+            dx = bounds[1][0] - bounds[0][0],
+            dy = bounds[1][1] - bounds[0][1],
+            x = (bounds[0][0] + bounds[1][0]) / 2,
+            y = (bounds[0][1] + bounds[1][1]) / 2,
+            scale = .9 / Math.max(dx / width, dy / height),
+            translate = [width / 2 - scale * x, height / 2 - scale * y];
+
+        g.transition()
+            .duration(750)
+            .style("stroke-width", 1.5 / scale + "px")
+            .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
+
+        g.selectAll(".mark")
+            .transition()
+            .duration(750)
+            .attr("transform", function (d) {
+                var t = d3.transform(d3.select(this).attr("transform")).translate;
+                return "translate(" + t[0] + "," + t[1] + ")scale(" + 1 / scale + ")";
+            });
+    }
+
+    function reset() {
+        active.classed("active", false);
+        active = d3.select(null);
+
+        g.transition()
+            .duration(750)
+            .style("stroke-width", "1.5px")
+            .attr("transform", "");
+
+        g.selectAll(".mark")
+            .attr("transform", function (d) {
+                var t = d3.transform(d3.select(this).attr("transform")).translate;
+                console.log(this);
+                return "translate(" + t[0] + "," + t[1] + ")scale(" + 1 + ")";
+            });
+    }
 
 
 
 
 
-	  // map
-	  var svg_map = d3.select("#map")
-	      .append("div")
-	      .attr("id", "svg-container")
-	      .append("svg")
-	      .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
-	      .attr("preserveAspectRatio", "xMinYMin meet")
-	      .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
-	      .attr("id", "svg-content-responsive");
+    // detail
+    var svg_detail = d3.select("div#detail")
+        .append("div")
+        .attr("id", "svg-container")
+        .append("svg")
+        .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
+        .attr("id", "svg-content-responsive")
 
 
+</script>
 
 
-
-	  // detail
-	  var svg_detail = d3.select("div#detail")
-	      .append("div")
-	      .attr("id", "svg-container")
-	      .append("svg")
-	      .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
-	      .attr("preserveAspectRatio", "xMinYMin meet")
-	      .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
-	      .attr("id", "svg-content-responsive")
-
-
-	</script>
-
-
-
-    <script src="jquery-2.1.4.min.js"></script>
-    <script src="foundation.js"></script>
-    <script>
-      $(document).foundation();
-    </script>
-  </body>
+<script src="jquery-2.1.4.min.js"></script>
+<script src="foundation.js"></script>
+<script>
+    $(document).foundation();
+</script>
+</body>
 </html>
 
 
