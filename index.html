@@ -41,11 +41,6 @@
 
         .feature {
             fill: #ccc;
-            cursor: pointer;
-        }
-
-        .feature.active {
-            fill: orange;
         }
 
         .mesh {
@@ -53,6 +48,10 @@
             stroke: #fff;
             stroke-linecap: round;
             stroke-linejoin: round;
+        }
+
+        #map text {
+            cursor: default;
         }
 
     </style>
@@ -131,9 +130,11 @@
     </div>
     <div class="medium-6 columns medium-pull-6">
         <h2>OVERVIEW</h2>
-        <p>This section shows the overall attack information of the past 20 years (1996-2015). Cities attacked are presented with red circles. More to add:<br>1. Circle size for damage (property damage and injuries/death in different color, as interactive function);
-        <br>2. Drag bar to select years
-        <br>3. Hover/click circle show attack information as interactive function.
+        <p>This section shows the overall attack information of the past 20 years (1996-2015). Cities attacked are
+            presented with red circles. More to add:<br>1. Circle size for damage (property damage and injuries/death in
+            different color, as interactive function);
+            <br>2. Drag bar to select years
+            <br>3. Hover/click circle show attack information as interactive function.
         </p>
     </div>
 </div>
@@ -144,7 +145,9 @@
     <div class="small-13 small-centered columns">
         <h2>DETAILS</h2>
         <p>
-            This section is designed to show the overview of the attacks in 20 years (1996-2015), with some details, weapons and targets in particular. <br>The aim of this section is to show which weapons are highly dangerous and which places or buildings should strengthen security to prevent attack from happening. </p>
+            This section is designed to show the overview of the attacks in 20 years (1996-2015), with some details,
+            weapons and targets in particular. <br>The aim of this section is to show which weapons are highly dangerous
+            and which places or buildings should strengthen security to prevent attack from happening. </p>
     </div>
     <div class="small-13 small-centered columns text-center">
         <img class="thumbnail" src="overview.png">
@@ -160,8 +163,9 @@
     </div>
     <div class="medium-6 columns medium-pull-6">
         <h2>MORE DETAILS</h2>
-        <p>If time allows, we will put implement a force-directed graph or word cloud of keywords extracted from the  media coverage of these attacks, to see if there's deviation between the real data and public awareness.
-        <br> More charts coming soon...</p>
+        <p>If time allows, we will put implement a force-directed graph or word cloud of keywords extracted from the
+            media coverage of these attacks, to see if there's deviation between the real data and public awareness.
+            <br> More charts coming soon...</p>
     </div>
 </div>
 
@@ -237,8 +241,7 @@
     svg_map.append("rect")
         .attr("class", "background")
         .attr("width", width)
-        .attr("height", height)
-        .on("click", reset);
+        .attr("height", height);
 
     var g = svg_map.append("g")
         .style("stroke-width", "1.5px");
@@ -250,8 +253,7 @@
             .data(topojson.feature(us, us.objects.states).features)
             .enter().append("path")
             .attr("d", path)
-            .attr("class", "feature")
-            .on("click", clicked);
+            .attr("class", "feature");
 
         g.append("path")
             .datum(topojson.mesh(us, us.objects.states, function (a, b) {
@@ -262,13 +264,12 @@
 
     });
 
-    d3.csv("dataset.csv", function (error, data) {
+    d3.csv("dataset_format.csv", function (error, data) {
         data.forEach(function (d) {
             d.latitude = +d.latitude;
             d.longitude = +d.longitude;
         });
 
-        //插入分组元素
         var location = svg_map.selectAll(".location")
             .data(data)
             .enter()
@@ -277,58 +278,51 @@
             .attr("class", "mark")
             .attr("r", 7)
             .attr("fill", "red")
-            .attr("style", "opacity: 0.3")
+            .attr("style", "opacity: 0.15")
             .attr("transform", function (d) {
-                return "translate(" + projection([d.longitude, d.latitude]) + ")";
+                var city = [];
+                city.push(d.longitude);
+                city.push(d.latitude);
+                proCity = projection(city);
+                return "translate(" + proCity + ")";
+            })
+            .on("mouseover", handleMouseOver)
+            .on("mouseout", handleMouseOut);
+
+        function handleMouseOver(d) {
+            d3.select(this).attr({
+                fill: "teal",
+                style: "opacity: 1",
+                r: 10
             });
+            svg_map.append("text")
+                .attr({
+                    id: "t" + d.iyear,  // Create an id for text so we can select it later for removing on mouseout
+                    transform: function () {
+                        var city_text = [];
+                        city_text.push(d.longitude - 2);
+                        city_text.push(d.latitude - 1);
+                        proCity_text = projection(city_text);
+                        return "translate(" + proCity_text + ")";
+                    },
+                })
+                .text(function () {
+                    return d.city;  // Value of the text
+                });
+        }
+
+        function handleMouseOut(d, i) {
+            // Use D3 to select element, change color back to normal
+            d3.select(this).attr({
+                fill: "red",
+                style: "opacity: 0.15",
+                r: 7
+            });
+
+            // Select text by id and then remove
+            d3.select("#t" + d.iyear).remove();  // Remove text location
+        }
     })
-
-    function clicked(d) {
-        if (active.node() === this) return reset();
-        active.classed("active", false);
-        active = d3.select(this).classed("active", true);
-
-        var bounds = path.bounds(d),
-            dx = bounds[1][0] - bounds[0][0],
-            dy = bounds[1][1] - bounds[0][1],
-            x = (bounds[0][0] + bounds[1][0]) / 2,
-            y = (bounds[0][1] + bounds[1][1]) / 2,
-            scale = .9 / Math.max(dx / width, dy / height),
-            translate = [width / 2 - scale * x, height / 2 - scale * y];
-
-        g.transition()
-            .duration(750)
-            .style("stroke-width", 1.5 / scale + "px")
-            .attr("transform", "translate(" + translate + ")scale(" + scale + ")");
-
-        g.selectAll(".mark")
-            .transition()
-            .duration(750)
-            .attr("transform", function (d) {
-                var t = d3.transform(d3.select(this).attr("transform")).translate;
-                return "translate(" + t[0] + "," + t[1] + ")scale(" + 1 / scale + ")";
-            });
-    }
-
-    function reset() {
-        active.classed("active", false);
-        active = d3.select(null);
-
-        g.transition()
-            .duration(750)
-            .style("stroke-width", "1.5px")
-            .attr("transform", "");
-
-        g.selectAll(".mark")
-            .attr("transform", function (d) {
-                var t = d3.transform(d3.select(this).attr("transform")).translate;
-                console.log(this);
-                return "translate(" + t[0] + "," + t[1] + ")scale(" + 1 + ")";
-            });
-    }
-
-
-
 
 
     // detail
