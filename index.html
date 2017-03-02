@@ -13,13 +13,6 @@
             margin: 0 auto;
         }
 
-        svg {
-            font: 1em Consolas;
-            shape-rendering: crispEdges;
-        }
-
-        /* CSS that makes chart responsive */
-
         #svg-container {
             position: relative;
             width: 100%;
@@ -55,28 +48,32 @@
         }
 
         /* Line Chart CSS by Tingting Ma */
-        #svg-content-responsive .line {
+        #line #svg-content-responsive .line {
             fill: none;
             stroke-width: 1px;
         }
 
-        #svg-content-responsive .axis path {
+        #line #svg-content-responsive .axis path {
             stroke: black;
             stroke-width: 1px;
             fill: none;
             shape-rendering: crispEdges;
         }
 
-        #svg-content-responsive .tick line {
+        #line #svg-content-responsive .tick line {
             stroke: black;
             stroke-width: 1px;
         }
 
-        #svg-content-responsive text {
+        #line #svg-content-responsive text {
             font-family: "Times New Roman";
         }
 
         /* Bubble Chart CSS by Tingting Ma */
+        #bubble #svg-content-responsive text {
+            font-family: "Times New Roman";
+        }
+
         #bubble-150, #bubble-113 {
             fill: silver;
         }
@@ -87,6 +84,30 @@
 
         #bubble-224 {
             fill: orange;
+        }
+
+        /* Stacked Bar Chart CSS by Jinyan Lyu */
+        .svg-bar svg {
+            font: 0.75em Consolas;
+            shape-rendering: crispEdges;
+        }
+
+        .svg-bar .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+        }
+
+        .svg-bar path.domain {
+            stroke: none;
+        }
+
+        .svg-bar .y .tick line {
+            stroke: #ddd;
+        }
+
+        .svg-bar .active {
+            fill: teal;
         }
 
     </style>
@@ -199,11 +220,15 @@
     </div>
     <div class="medium-5 columns medium-pull-7">
         <h2>Attacks in seven states (1996-2015)</h2>
-        <p>The line chart shows the most vulnerable seven states which easily become targets of terrorists in the past 20 years.
+        <p>The line chart shows the most vulnerable seven states which easily become targets of terrorists in the past
+            20 years.
             <br> As we can see from the line chart,
-            California was attacked more than 70 times in the past 20 years, while the total number of the U.S. is 495, which ranks the first among all the states.
-            And it still has an upward trend in 2014 and 2015. And the other states with more than eight attacks in the past twenty years are New York, Texas, Washington, Virginia,
-            D.C. and Missouri.These states may need a stronger protect and more efficient way to fight against terrorism.</p>
+            California was attacked more than 70 times in the past 20 years, while the total number of the U.S. is 495,
+            which ranks the first among all the states.
+            And it still has an upward trend in 2014 and 2015. And the other states with more than eight attacks in the
+            past twenty years are New York, Texas, Washington, Virginia,
+            D.C. and Missouri.These states may need a stronger protect and more efficient way to fight against
+            terrorism.</p>
     </div>
 </div>
 
@@ -211,16 +236,41 @@
     <div class="medium-7 columns medium-push-5">
         <h2>Terrorist groups responsible for the U.S. attacks (1996-2015)</h2>
         <p>
-            We analyzed attacks data of 1996 to 2015. Terrorist groups responsible for these attacks can be divided into four types: US domestic terrorist groups, foreign terrorist
-        groups, unaffiliated individual(s) and unknown. As we can see from the bubble chart, among total 495 attacks in the recent 20 years,
-            224 attacks are from the U.S. terrorist groups, while only 9 attacks are from foreign groups. That is why CNN reported
-            "Every lethal terrorist attack in the United States in the past decade and a half has been carried out by American citizens or legal permanent residents, operating either as lone wolves or in pairs, who have no formal connections or training from terrorist organizations such as al Qaeda or ISIS."
+            We analyzed attacks data of 1996 to 2015. Terrorist groups responsible for these attacks can be divided into
+            four types: US domestic terrorist groups, foreign terrorist
+            groups, unaffiliated individual(s) and unknown. As we can see from the bubble chart, among total 495 attacks
+            in the recent 20 years,
+            224 attacks are from the U.S. terrorist groups, while only 9 attacks are from foreign groups. That is why
+            CNN reported
+            "Every lethal terrorist attack in the United States in the past decade and a half has been carried out by
+            American citizens or legal permanent residents, operating either as lone wolves or in pairs, who have no
+            formal connections or training from terrorist organizations such as al Qaeda or ISIS."
             Check the whole report here:
-            <a href="http://www.cnn.com/2016/06/12/opinions/orlando-homegrown-terror-bergen/">The real terror threat in America is homegrown.</a>
-                </p>
+            <a href="http://www.cnn.com/2016/06/12/opinions/orlando-homegrown-terror-bergen/">The real terror threat in
+                America is homegrown.</a>
+        </p>
     </div>
     <div class="medium-5 columns medium-pull-7">
         <div id="bubble"></div>
+    </div>
+</div>
+
+<hr>
+
+<div class="row">
+    <div class="medium-7 columns medium-push-5">
+        <div id="multi"></div>
+    </div>
+    <div class="medium-5 columns medium-pull-7">
+        <h2>Weapons</h2>
+        <p>此处替换为饼图！！
+            <br> As we can see from the line chart,
+            California was attacked more than 70 times in the past 20 years, while the total number of the U.S. is 495,
+            which ranks the first among all the states.
+            And it still has an upward trend in 2014 and 2015. And the other states with more than eight attacks in the
+            past twenty years are New York, Texas, Washington, Virginia,
+            D.C. and Missouri.These states may need a stronger protect and more efficient way to fight against
+            terrorism.</p>
     </div>
 </div>
 
@@ -380,6 +430,200 @@
     })
 
     // Map Chart Ends
+
+
+    // Stacked Bar Chart Begins (By Jinyan Lyu)
+    var width_bar = 640,
+        height_bar = 360;
+
+    var svg_stackedBar = d3.select("#multi")
+        .append("div")
+        .attr("id", "svg-container")
+        .attr("class", "svg-bar")
+        .append("svg")
+        .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + ( width_bar + margin.left + margin.right  ) + " " + ( height_bar + margin.top + margin.bottom ))
+        .attr("id", "svg-content-responsive");
+
+    d3.csv("weapon.csv", function (error, data) {
+
+        data.forEach(function (d) {
+            d.bioChe = +d.bioChe;
+            d.firAm = +d.firAm;
+            d.EBD = +d.EBD;
+            d.FMS = +d.FMS;
+            d.inc = +d.inc;
+            d.veh = +d.veh;
+            d.oth = +d.oth;
+            d.total = +d.total;
+        });
+
+        var parse = d3.time.format("%Y").parse;
+        var formatDate = d3.time.format("%Y");
+
+        // Transpose the data into layers
+        var dataset = d3.layout.stack()(["bioChe", "firAm", "EBD", "FMS", "inc", "veh", "oth"].map(function (weapon) {
+            return data.map(function (d) {
+                return {weapon: weapon, x: formatDate(parse(d.year)), y: +d[weapon]};
+            });
+        }));
+
+        // Set x, y and colors
+        var x = d3.scale.ordinal()
+            .domain(dataset[0].map(function (d) {
+                return d.x;
+            }))
+            .rangeRoundBands([10, width_bar - 10], 0.1);
+
+        var y = d3.scale.linear()
+            .domain([0, d3.max(dataset, function (d) {
+                return d3.max(d, function (d) {
+                    return d.y0 + d.y;
+                });
+            })])
+            .range([height_bar, 0]);
+
+        var colors = ["rgb(89,65,63)", "rgb(205,104,16)", "rgb(209,31,11)", "rgb(159,59,96)",
+            "rgb(165,122,106)", "rgb(241,119,151)", "rgb(252,183,144)"];
+
+        // Define and draw axes
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left")
+            .ticks(5)
+            .tickSize(-width_bar, 0, 0)
+            .tickFormat(function (d) {
+                return d.toLocaleString()
+            });
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        svg_stackedBar.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+        svg_stackedBar.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height_bar + ")")
+            .call(xAxis);
+
+
+        var groups = svg_stackedBar.selectAll("g.weapon")
+            .data(dataset)
+            .enter().append("g")
+            .attr("class", "weapon")
+            .style("fill", function (d, i) {
+                return colors[i];
+            });
+
+        var rect = groups.selectAll("rect")
+            .data(function (d, i) {
+                return d;
+            })
+            .enter()
+            .append("rect")
+            .style("opacity", 0.85)
+            .attr("class", function (d) {
+                return d.weapon;
+            })
+            .attr("x", function (d) {
+                return x(d.x);
+            })
+            .attr("y", function (d) {
+                return y(d.y0 + d.y);
+            })
+            .attr("height", function (d) {
+                return y(d.y0) - y(d.y0 + d.y);
+            })
+            .attr("width", x.rangeBand())
+            .on("mouseover", function () {
+                tooltip_stackedBar.style("display", null);
+                d3.select(this).classed("active", true);
+            })
+            .on("mouseout", function () {
+                tooltip_stackedBar.style("display", "none");
+                d3.select(this).classed("active", false);
+            })
+            .on("mousemove", function (d) {
+                var xPosition = d3.mouse(this)[0] - 15;
+                var yPosition = d3.mouse(this)[1] - 25;
+                tooltip_stackedBar.attr("transform", "translate(" + xPosition + "," + yPosition + ")");
+                tooltip_stackedBar.select("text").text(d.y);
+            });
+
+
+        // Draw legend
+        var legend_stackedBar = svg_stackedBar.selectAll(".legend_stackedBar")
+            .data(colors)
+            .enter().append("g")
+            .attr("class", "legend_stackedBar")
+            .attr("transform", function (d, i) {
+                return "translate(30," + i * 19 + ")";
+            });
+
+        var class_stackedBar = ["bioChe", "firAm", "EBD", "FMS", "inc", "veh", "oth"];
+
+        legend_stackedBar.append("rect")
+            .attr("x", width_bar - 305)
+            .attr("width", 18)
+            .attr("height", 18)
+            .attr("class", function (d, i) {
+                return class_stackedBar[i];
+            })
+            .style("opacity", 0.85)
+            .style("fill", function (d, i) {
+                return colors.slice()[i];
+            });
+
+        legend_stackedBar.append("text")
+            .attr("x", width_bar - 280)
+            .attr("y", 10)
+            .attr("dy", ".35em")
+            .style("text-anchor", "start")
+            .text(function (d, i) {
+                switch (i) {
+                    case 0:
+                        return "Biological and Chemical";
+                    case 1:
+                        return "Firearms";
+                    case 2:
+                        return "Explosives/Bombs/Dynamite";
+                    case 3:
+                        return "Fake Weapons/Melee/Sabotage";
+                    case 4:
+                        return "Incendiary";
+                    case 5:
+                        return "Vehicles";
+                    case 6:
+                        return "Others";
+                }
+            });
+
+        // Prep the tooltip bits, initial display is hidden
+
+        var tooltip_stackedBar = svg_stackedBar.append("g")
+            .attr("class", "tooltip")
+            .style("display", "none");
+
+        tooltip_stackedBar.append("rect")
+            .attr("width", 30)
+            .attr("height", 20)
+            .attr("fill", "white")
+            .style("opacity", 0.5);
+
+        tooltip_stackedBar.append("text")
+            .attr("x", 15)
+            .attr("dy", "1.2em")
+            .style("text-anchor", "middle")
+            .attr("font-size", "1em")
+            .attr("font-weight", "bold");
+
+    })
+
+    // Stacked Bar Chart Ends
 
 
     // Bubble Chart Begins (By Tingting Ma)
