@@ -54,6 +54,41 @@
             cursor: default;
         }
 
+        /* Line Chart CSS by Tingting Ma */
+        #svg-content-responsive .line {
+            fill: none;
+            stroke-width: 1px;
+        }
+
+        #svg-content-responsive .axis path {
+            stroke: black;
+            stroke-width: 1px;
+            fill: none;
+            shape-rendering: crispEdges;
+        }
+
+        #svg-content-responsive .tick line {
+            stroke: black;
+            stroke-width: 1px;
+        }
+
+        #svg-content-responsive text {
+            font-family: "Times New Roman";
+        }
+
+        /* Bubble Chart CSS by Tingting Ma */
+        #bubble-150, #bubble-113 {
+            fill: silver;
+        }
+
+        #bubble-7 {
+            fill: teal;
+        }
+
+        #bubble-224 {
+            fill: orange;
+        }
+
     </style>
 
     <script src="https://d3js.org/d3.v3.min.js"></script>
@@ -150,6 +185,7 @@
             and which places or buildings should strengthen security to prevent attack from happening. </p>
     </div>
     <div class="small-13 small-centered columns text-center">
+        <!--         <div id="line"></div> -->
         <img class="thumbnail" src="overview.png">
         <!-- <img class="thumbnail" src="http://placehold.it/640x360">  -->
     </div>
@@ -158,14 +194,26 @@
 <hr>
 
 <div class="row">
-    <div class="medium-6 columns medium-push-6">
-        <img class="thumbnail" src="details.png"> <!-- 把img标签替换成<div id="detail"></div> -->
+    <div class="medium-7 columns medium-push-5">
+        <div id="line"></div>
     </div>
-    <div class="medium-6 columns medium-pull-6">
-        <h2>MORE DETAILS</h2>
-        <p>If time allows, we will put implement a force-directed graph or word cloud of keywords extracted from the
+    <div class="medium-5 columns medium-pull-7">
+        <h2>右边line chart的标题</h2>
+        <p>这段替换成line chart的文字说明。If time allows, we will put implement a force-directed graph or word cloud of keywords
+            extracted from the
             media coverage of these attacks, to see if there's deviation between the real data and public awareness.
             <br> More charts coming soon...</p>
+    </div>
+</div>
+
+<div class="row">
+    <div class="medium-7 columns medium-push-5">
+        <h2>替换标题</h2>
+        <p>替换成关于home-grown还有外国人恐袭的相关...解释一下这个图，结论就顺着老师的意思，不能啥都怪外国人...😑
+            <br> More charts coming soon...</p>
+    </div>
+    <div class="medium-5 columns medium-pull-7">
+        <div id="bubble"></div>
     </div>
 </div>
 
@@ -216,7 +264,7 @@
         .attr("id", "svg-content-responsive");
 
 
-    // map
+    // Map Chart Begins (By Jinyan Lyu)
     var svg_map = d3.select("#map")
         .append("div")
         .attr("id", "svg-container")
@@ -324,16 +372,384 @@
         }
     })
 
+    // Map Chart Ends
 
-    // detail
-    var svg_detail = d3.select("div#detail")
+
+    // Bubble Chart Begins (By Tingting Ma)
+    var diameter = 500,
+        format_bubble = d3.format(",d");
+
+    var div_bubble = d3.select("#bubble")
         .append("div")
-        .attr("id", "svg-container")
-        .append("svg")
+        .attr("id", "svg-container");
+
+    var bubble = d3.layout.pack()
+        .sort(null)
+        .size([diameter, diameter])
+        .padding(1.5);
+
+    var svg_bubble = div_bubble.append("svg")
+        .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
+        .attr("class", "bubble")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + ( diameter + margin.left + margin.right  ) + " " + ( diameter + margin.top + margin.bottom ))
+        .attr("id", "svg-content-responsive");
+
+    var tooltip = d3.select("body")
+        .append("div")
+        .style("position", "absolute")
+        .style("z-index", "10")
+        .style("visibility", "hidden")
+        .style("color", "white")
+        .style("padding", "8px")
+        .style("background-color", "rgba(0, 0, 0, 0.6)")
+        .style("font-size", "1em")
+        .text("tooltip");
+
+    d3.csv("sheet3.csv", function (error, data) {
+
+        //convert numerical values from strings to numbers
+        data = data.map(function (d) {
+            d.value = +d["attack number"];
+            return d;
+        });
+
+        //bubbles needs very specific format, convert data to this.
+        var nodes = bubble.nodes({children: data}).filter(function (d) {
+            return !d.children;
+        });
+
+        //setup the chart
+        var bubbles = svg_bubble.append("g")
+            .attr("transform", "translate(0,0)")
+            .selectAll(".bubble")
+            .data(nodes)
+            .enter();
+
+        //create the bubbles
+        bubbles.append("circle")
+            .attr("r", function (d) {
+                return d.r;
+            })
+            .attr("cx", function (d) {
+                return d.x;
+            })
+            .attr("cy", function (d) {
+                return d.y;
+            })
+            .attr("id", function (d) {
+                return "bubble-" + d.value;
+            })
+            .on("mouseover", function (d) {
+                tooltip.text(d["Terrorist group type"] + ": " + format_bubble(d.value));
+                tooltip.style("visibility", "visible");
+            })
+            .on("mousemove", function () {
+                return tooltip.style("top", (d3.event.pageY - 10) + "px").style("left", (d3.event.pageX + 10) + "px");
+            })
+            .on("mouseout", function () {
+                return tooltip.style("visibility", "hidden");
+            });
+
+        //format the text for each bubble
+        bubbles.append("text")
+            .attr("x", function (d) {
+                return d.x;
+            })
+            .attr("y", function (d) {
+                return d.y + 5;
+            })
+            .attr("text-anchor", "middle")
+            .text(function (d) {
+                return d["Terrorist group type"];
+            })
+            .style({
+                "fill": "black",
+                "font-size": "1em"
+            });
+    })
+
+    // Bubble Chart Ends
+
+
+    // Line Chart Begins (By Tingting Ma)
+    // basic SVG setup
+    var margin_line = {top: 10, right: 200, bottom: 10, left: 40},
+        height_line = 500 - margin_line.top - margin_line.bottom,
+        width_line = 960 - margin_line.left - margin_line.right;
+
+    var svg_lineDiv = d3.select("#line")
+        .append("div")
+        .attr("id", "svg-container");
+
+    var svg_line = svg_lineDiv.append("svg")
         .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
         .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
+        .attr("viewBox", "0 0 " + ( width_line + margin_line.left + margin_line.right  ) + " " + ( height_line + margin_line.top + margin_line.bottom ))
         .attr("id", "svg-content-responsive")
+        .append("g")
+        .attr("transform", "translate(" + margin_line.left + "," + margin_line.top + ")");
+    ;
+
+
+    // setup scales - the domain is specified inside of the function called when we load the data
+    var xScale = d3.time.scale().range([0, width_line]);
+    var yScale = d3.scale.linear().range([height_line, 0]);
+    var color = d3.scale.category10();
+
+    // setup the axes
+    var xAxis = d3.svg.axis().scale(xScale).orient("bottom");
+    var yAxis = d3.svg.axis().scale(yScale).orient("left");
+
+    // create function to parse dates into date objects
+    var parseDate = d3.time.format("%Y-%m-%d").parse;
+    var formatDate = d3.time.format("%Y-%m-%d");
+    var bisectDate = d3.bisector(function (d) {
+        return d.date;
+    }).left;
+
+    // set the line attributes
+    var line = d3.svg.line()
+        .interpolate("monotone")
+        .x(function (d) {
+            return xScale(d.date);
+        })
+        .y(function (d) {
+            return yScale(d.close);
+        });
+
+    var focus = svg_line.append("g").style("display", "none");
+
+    function contains(a, obj) {
+        var i = a.length;
+        while (i--) {
+            if (a[i] === obj) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // import data and create chart
+    d3.csv('us1.csv',
+        function (error, data) {
+
+            var states = [
+                "California", "New York", "Texas",
+                "Washington", "Virginia",
+                "Missouri", "District of Columbia"];
+            fck = [];
+            data.forEach(function (d) {
+                if (contains(states, d.provstate) && parseInt(d.iyear) >= 1996) {
+                    var flag1 = true;
+                    for (var i = 0; i < fck.length; i++) {
+                        if (fck[i].date == parseInt(d.iyear)) {
+                            fck[i][d.provstate] += 1;
+                            flag1 = false;
+                            break;
+                        }
+                    }
+                    if (flag1) {
+                        var t = {};
+                        t.date = parseInt(d.iyear);
+                        for (var i = 0; i < states.length; i++) {
+                            t[states[i]] = 0;
+                        }
+                        t[d.provstate] += 1;
+                        fck.push(t)
+                    }
+                }
+            });
+            fck.forEach(function (d) {
+                d.date = d.date.toString() + "-01-01";
+                d.date = parseDate(d.date);
+            });
+            data = fck;
+            // sort data ascending - needed to get correct bisector results
+            data.sort(function (a, b) {
+                return a.date - b.date;
+            });
+
+            // color domain
+            color.domain(d3.keys(data[0]).filter(function (key) {
+                return key !== "date";
+            }));
+
+            // create stocks array with object for each company containing all data
+            var stocks = color.domain().map(function (name) {
+                return {
+                    name: name,
+                    values: data.map(function (d) {
+                        return {date: d.date, close: d[name]};
+                    })
+                };
+            });
+
+            // add domain ranges to the x and y scales
+            xScale.domain([
+                d3.min(stocks, function (c) {
+                    return d3.min(c.values, function (v) {
+                        return v.date;
+                    });
+                }),
+                d3.max(stocks, function (c) {
+                    return d3.max(c.values, function (v) {
+                        return v.date;
+                    });
+                })
+            ]);
+            yScale.domain([
+                0,
+                // d3.min(stocks, function(c) { return d3.min(c.values, function(v) { return v.close; }); }),
+                d3.max(stocks, function (c) {
+                    return d3.max(c.values, function (v) {
+                        return v.close;
+                    });
+                })
+            ]);
+
+            // add the x axis
+            svg_line.append("g")
+                .attr("class", "x axis")
+                .attr("transform", "translate(0," + height_line + ")")
+                .call(xAxis);
+
+            // add the y axis
+            svg_line.append("g")
+                .attr("class", "y axis")
+                .call(yAxis)
+                .append("text")
+                .attr("transform", "rotate(-90)")
+                .attr("y", -60)
+                .attr("dy", ".71em")
+                .style("text-anchor", "end")
+                .text("Number of Attacks");
+
+            // add circle at intersection
+            focus.append("circle")
+                .attr("class", "y")
+                .attr("fill", "none")
+                .attr("stroke", "black")
+                .style("opacity", 0.5)
+                .attr("r", 8);
+
+            // add horizontal line at intersection
+            focus.append("line")
+                .attr("class", "x")
+                .attr("stroke", "black")
+                .attr("stroke-dasharray", "3,3")
+                .style("opacity", 0.5)
+                .attr("x1", 0)
+                .attr("x2", width_line);
+
+            // add vertical line at intersection
+            focus.append("line")
+                .attr("class", "y")
+                .attr("stroke", "black")
+                .attr("stroke-dasharray", "3,3")
+                .style("opacity", 0.5)
+                .attr("y1", 0)
+                .attr("y2", height_line);
+
+            // append rectangle for capturing if mouse moves within area
+            svg_line.append("rect")
+                .attr("width", width_line)
+                .attr("height", height_line)
+                .style("fill", "none")
+                .style("pointer-events", "all")
+                .on("mouseover", function () {
+                    focus.style("display", null);
+                })
+                .on("mouseout", function () {
+                    focus.style("display", "none");
+                })
+                .on("mousemove", mousemove);
+
+            // add the line groups
+            var stock = svg_line.selectAll(".stockXYZ")
+                .data(stocks)
+                .enter().append("g")
+                .attr("class", "stockXYZ");
+
+            // add the stock price paths
+            stock.append("path")
+                .attr("class", "line")
+                .attr("id", function (d, i) {
+                    return "id" + i;
+                })
+                .attr("d", function (d) {
+                    return line(d.values);
+                })
+                .style("stroke", function (d) {
+                    return color(d.name);
+                });
+
+
+            // add the stock labels at the right edge of chart
+            var maxLen = data.length;
+            stock.append("text")
+                .datum(function (d) {
+                    return {name: d.name, value: d.values[maxLen - 1]};
+                })
+                .attr("transform", function (d) {
+                    return "translate(" + xScale(d.value.date) + "," + yScale(d.value.close) + ")";
+                })
+                .attr("id", function (d, i) {
+                    return "text_id" + i;
+                })
+                .attr("x", function (d, i) {
+                    if (d.name == "Washington") return 65;
+                    if (d.name == "Missouri") return 50;
+                    return 3;
+                })
+                .attr("dy", ".35em")
+                .text(function (d) {
+                    if (d.name == "District of Columbia") return "D. C.";
+                    return d.name;
+                })
+                .on("mouseover", function (d, i) {
+                    for (j = 0; j < 8; j++) {
+                        if (i !== j) {
+                            d3.select("#id" + j).style("opacity", 0.1);
+                            d3.select("#text_id" + j).style("opacity", 0.2);
+                        }
+                    }
+                    ;
+                })
+                .on("mouseout", function (d, i) {
+                    for (j = 0; j < 8; j++) {
+                        d3.select("#id" + j).style("opacity", 1);
+                        d3.select("#text_id" + j).style("opacity", 1);
+                    }
+                    ;
+                });
+
+            // mousemove function
+            function mousemove() {
+
+                var x0 = xScale.invert(d3.mouse(this)[0]);
+                var i = bisectDate(data, x0, 1); // gives index of element which has date higher than x0
+                var d0 = data[i - 1], d1 = data[i];
+                var d = x0 - d0.date > d1.date - x0 ? d1 : d0;
+                var close = d3.max([+d["California"], +d["New York"], +d["Texas"], +d["Washington"],
+                    +d["Virginia"], +d["Missouri"], +d["District of Columbia"]]);
+
+                focus.select("circle.y")
+                    .attr("transform", "translate(" + xScale(d.date) + "," + yScale(close) + ")");
+
+                focus.select("line.y")
+                    .attr("y2", height_line - yScale(close))
+                    .attr("transform", "translate(" + xScale(d.date) + ","
+                        + yScale(close) + ")");
+
+                focus.select("line.x")
+                    .attr("x2", xScale(d.date))
+                    .attr("transform", "translate(0,"
+                        + (yScale(close)) + ")");
+
+            };
+
+        });
 
 
 </script>

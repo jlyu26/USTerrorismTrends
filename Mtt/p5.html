@@ -136,7 +136,11 @@ var groups = svg1.selectAll("g")
                 .data(data)  
                 .enter()  
                 .append("g")  
-                .style("fill",function(d,i){ return color12[i]; });
+                .style("fill",function(d,i){ 
+                     return color12[i];
+                });
+
+           
 
 
 
@@ -159,10 +163,24 @@ return xScale.rangeBand();
                     .attr("transform","translate(" + padding.left + ","   
    + padding.top + ")")
                     .on("click",function(d,i){
-                    	                 	console.log("g d is",d);
-                 	console.log("g i is",i);
+                   // console.log("d is",d);
+                 	//console.log("i is",i);
                  	pie(i);
-                 }); 
+                 })
+    .transition()
+    .duration(2000)
+    .attr("fill",function(d,i){
+        if(d.year==2001 && d.y0==36){
+        	return 'yellow';
+        }})
+    .transition()
+    .duration(2000)
+    .attr("fill",function(d,i){
+        if(d.year==2001 && d.y0==36){
+        	return "#F08080";
+        }});
+
+
 
 //添加坐标轴
 	var xAxis = d3.svg.axis()
@@ -269,12 +287,13 @@ var piedata = pie(datapie2);
 					  .attr("transform","translate("+ (width/3) +","+ (width/2) +")");
 					  
 		arcs.append("path")
-			.attr("fill",function(d,i){
-				return color20(i);
-			})
 			.attr("d",function(d){
 				return arc(d);
 			})
+             .on("click",function(d,i){
+				 console.log('d is',d);
+                 console.log('i is',i);
+           })
 			 .on("mouseover",function(d,i){
                 tooltip.html(String(targetname[i]))                       //needs to be change to text
                        .style("left", (d3.event.pageX) + "px")
@@ -290,6 +309,21 @@ var piedata = pie(datapie2);
             .on("mouseout",function(d,i){
                 tooltip.style("opacity",0.0);
               })
+            .transition()
+		    .duration(2000)
+			.attr("fill",function(d,i){
+				if(i==0 || i==1){
+                      return "yellow";
+				}
+				else{return color20(i);}
+			})
+			.transition()
+		    .duration(2000)
+			.attr("fill",function(d,i){
+
+                      return color20(i);
+
+			});
 		arcs.append("text")  
             .attr("transform",function(d){  
                 return "translate(" + arc.centroid(d) + ")";  
