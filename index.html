@@ -509,8 +509,7 @@
             })])
             .range([height_bar, 0]);
 
-        var colors = ["rgb(89,65,63)", "rgb(205,104,16)", "rgb(209,31,11)", "rgb(159,59,96)",
-            "rgb(165,122,106)", "rgb(241,119,151)", "rgb(252,183,144)"];
+        var colors = ["rgb(255,215, 15)", "rgb(255,187, 15)", "rgb(179,131, 12)", "rgb(179,106, 12)", "rgb(171,177, 11)", "rgb(109,130,61)", "rgb(100,100,100)"];
 
         // Define and draw axes
         var yAxis = d3.svg.axis()
@@ -550,7 +549,7 @@
             })
             .enter()
             .append("rect")
-            .style("opacity", 0.85)
+            .style("opacity", 1)
             .attr("class", function (d) {
                 return d.weapon;
             })
@@ -598,7 +597,7 @@
             .attr("class", function (d, i) {
                 return class_stackedBar[i];
             })
-            .style("opacity", 0.85)
+            .style("opacity", 0.99)
             .style("fill", function (d, i) {
                 return colors.slice()[i];
             })
@@ -722,8 +721,8 @@
 
             function getColor(idx) {
                 var palette = [
-                    "#2ec7c9", "#b6a2de", "#5ab1ef", "#ffb980", "#d87a80",
-                    "#8d98b3", "#e5cf0d", "#97b552", "#95706d", "#dc69aa",
+                    "#7c8a4f", "#7c8a4f", "#84541a", "#e7ad79", "#EB9419",
+                    "#f4e14b", "#3f4c08", "#FFB03B", "#468966", "#8C6934",
                 ]
                 return palette[idx % palette.length];
             }
@@ -732,7 +731,7 @@
                 .data(pieData)
                 .enter()
                 .append("path")
-                .style("opacity", 0.75)
+                .style("opacity", 0.99)
                 .attr("class", function (d) {
                     return d.data.targets;
                 })
@@ -747,7 +746,7 @@
                 .data(pieData)
                 .enter()
                 .append("path")
-                .style("opacity", 0.75)
+                .style("opacity", 0.99)
                 .attr("class", function (d) {
                     return d.data.targets;
                 })
