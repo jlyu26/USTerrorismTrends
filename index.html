@@ -423,7 +423,7 @@
     var g = svg_map.append("g")
         .style("stroke-width", "1.5px");
 
-    d3.json("/data/us.json", function (error, us) {
+    d3.json("us.json", function (error, us) {
         if (error) throw error;
 
         g.selectAll("path")
@@ -441,7 +441,7 @@
 
     });
 
-    d3.csv("/data/dataset_format.csv", function (error, data) {
+    d3.csv("dataset_format.csv", function (error, data) {
         data.forEach(function (d) {
             d.latitude = +d.latitude;
             d.longitude = +d.longitude;
@@ -519,7 +519,7 @@
         .attr("viewBox", "0 0 " + ( width_bar + margin.left + margin.right  ) + " " + ( height_bar + margin.top + margin.bottom ))
         .attr("id", "svg-content-responsive");
 
-    d3.csv("/data/weapon.csv", function (error, data) {
+    d3.csv("weapon.csv", function (error, data) {
 
         data.forEach(function (d) {
             d.bioChe = +d.bioChe;
@@ -735,7 +735,7 @@
 
         dataset_pie = className;
 
-        d3.csv("/data/" + dataset_pie + ".csv", function (error, data) {
+        d3.csv(dataset_pie + ".csv", function (error, data) {
             if (error) {
                 return console.log(error);
             }
@@ -887,7 +887,7 @@
         .style("font-size", "1em")
         .text("tooltip");
 
-    d3.csv("/data/sheet3.csv", function (error, data) {
+    d3.csv("sheet3.csv", function (error, data) {
 
         //convert numerical values from strings to numbers
         data = data.map(function (d) {
@@ -1013,7 +1013,7 @@
     }
 
     // import data and create chart
-    d3.csv('/data/us1.csv',
+    d3.csv('us1.csv',
         function (error, data) {
 
             var states = [
