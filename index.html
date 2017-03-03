@@ -1,12 +1,36 @@
-<!doctype html>
-<html class="no-js" lang="en">
-<head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>U.S. Terrorism Trends</title>
-    <link rel="stylesheet" href="foundation.min.css">
-    <style>
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>U.S. Terrorism Trends (1996-2015)</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+
+    <!-- Theme CSS -->
+    <link href="css/grayscale.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
         #chart {
             max-width: 800px;
             width: 100%;
@@ -45,6 +69,9 @@
 
         #map text {
             cursor: default;
+            font-size: 1em;
+            font-weight: 600;
+            text-shadow: 1px 1px #FFFFFF;
         }
 
         /* Line Chart CSS by Tingting Ma */
@@ -66,7 +93,9 @@
         }
 
         #line #svg-content-responsive text {
-            font-family: "Times New Roman";
+            font-family: Consolas;
+            font-size: 0.9em;
+            font-weight: 600;
         }
 
         /* Bubble Chart CSS by Tingting Ma */
@@ -134,188 +163,214 @@
             text-align: center
         }
 
-    </style>
+        /* HTML styles */
 
+        .stats {
+            font-size: 1.5em;
+        }
+
+        #details .row {
+            padding-top: 0;
+        }
+
+        #overview .col-lg-4 p {
+            font-size: 1.15em;
+            text-align: left;
+        }
+
+        #details .col-lg-5 p {
+            font-size: 1.15em;
+            text-align: left;
+        }
+
+        #details .col-lg-7 p {
+            font-size: 1.15em;
+            text-align: left;
+        }
+
+        #details .col-lg-12 p {
+            font-size: 1.15em;
+            text-align: left;
+        }
+
+
+    </style>
     <script src="https://d3js.org/d3.v3.min.js"></script>
     <script src="//d3js.org/topojson.v1.min.js"></script>
+
 </head>
-<body>
 
-<!-- Start Top Bar -->
-<div class="top-bar">
-    <div class="top-bar-title">
-	      <span data-responsive-toggle="responsive-menu" data-hide-for="medium">
-	        <button class="menu-icon dark" type="button" data-toggle></button>
-	      </span>
-    </div>
-    <div id="responsive-menu">
-        <div class="top-bar-left">
-            <ul class="dropdown menu" data-dropdown-menu>
-                <li><a href="#">INTRODUCTION</a></li>
+<body id="page-top" data-spy="scroll" data-target=".navbar-fixed-top">
+
+<!-- Navigation -->
+<nav class="navbar navbar-custom navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+                Menu <i class="fa fa-bars"></i>
+            </button>
+            <a class="navbar-brand page-scroll" href="#page-top">
+                CS573@WPI
+            </a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-right navbar-main-collapse">
+            <ul class="nav navbar-nav">
+                <!-- Hidden li included to remove active class from about link when scrolled up past about section -->
+                <li class="hidden">
+                    <a href="#page-top"></a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#overview">Overview</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#details">Details</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#presentation">Presentation</a>
+                </li>
             </ul>
         </div>
-        <div class="top-bar-right">
-            <ul class="menu">
-                <li><a href="#">OVERVIEW</a></li>
-                <li><a href="#">DETAILS</a></li>
-                <li><a href="#">CONCLUSION</a></li>
-            </ul>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+
+<!-- Intro Header -->
+<header class="intro">
+    <div class="intro-body">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <h1 class="brand-heading">U.S. Terrorism Trends (1996-2015)</h1>
+                    <p class="intro-text">A data visualization work to reveal the truth of Terrorism in U.S.</p>
+                    <a href="#overview" class="btn btn-circle page-scroll">
+                        <i class="fa fa-angle-double-down animated"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
-</div>
-<!-- End Top Bar -->
+</header>
 
-<div class="callout large">
-    <div class="row column text-center">
-        <h1>U.S. Terrorism Trends</h1>
-        <p class="lead">A data visualization work to reveal the truth of Terrorism in U.S.</p>
-        <a href="#" class="button large">GET START</a>
-    </div>
-</div>
-
-<div class="row">
-    <div class="small-13 small-centered columns">
-        <h2>INTRODUCTION</h2>
-        <p>This section is a video about the project. Why we did this, why this is important, etc.</p>
-    </div>
-    <div class="small-13 small-centered columns text-center">
-        <img class="thumbnail" src="http://placehold.it/720x405">
-    </div>
-</div>
-
-<hr>
-
-<div class="row">
-    <div class="medium-6 columns medium-push-6">
-        <div id="map"></div>
-        <hr>
-        <div class="row column">
-            <ul class="vertical medium-horizontal menu expanded text-center">
-                <li>
-                    <div class="stat">20</div>
-                    <span>Years</span></li>
-                <li>
-                    <div class="stat">495</div>
-                    <span>Attacks</span></li>
-                <li>
-                    <div class="stat">**</div>
-                    <span>Cities</span></li>
-                <li>
-                    <div class="stat">****</div>
-                    <span>Deaths</span></li>
-            </ul>
+<!-- Overview Section -->
+<section id="overview" class="container content-section text-center">
+    <div class="row">
+        <div class="col-lg-4">
+            <h2>OVERVIEW</h2>
+            <p>This section shows the overall attack information of the past 20 years (1996-2015). Cities attacked are
+                presented with red circles. More to add:<br>1. Circle size for damage (property damage and
+                injuries/death in
+                different color, as interactive function);
+                <br>2. Drag bar to select years
+                <br>3. Hover/click circle show attack information as interactive function.
+            </p>
         </div>
-        <hr>
-    </div>
-    <div class="medium-6 columns medium-pull-6">
-        <h2>OVERVIEW</h2>
-        <p>This section shows the overall attack information of the past 20 years (1996-2015). Cities attacked are
-            presented with red circles. More to add:<br>1. Circle size for damage (property damage and injuries/death in
-            different color, as interactive function);
-            <br>2. Drag bar to select years
-            <br>3. Hover/click circle show attack information as interactive function.
-        </p>
-    </div>
-</div>
-
-<hr>
-
-<div class="row">
-    <div class="small-13 small-centered columns">
-        <h2>DETAILS</h2>
-        <p>
-            This section is designed to show the overview of the attacks in 20 years (1996-2015), with some details,
-            weapons and targets in particular. <br>The aim of this section is to show which weapons are highly dangerous
-            and which places or buildings should strengthen security to prevent attack from happening. </p>
-    </div>
-    <div class="small-13 small-centered columns text-center">
-        <img class="thumbnail" src="http://placehold.it/640x360">
-    </div>
-</div>
-
-<hr>
-
-<div class="row">
-    <div class="medium-7 columns medium-push-5">
-        <div id="line"></div>
-    </div>
-    <div class="medium-5 columns medium-pull-7">
-        <h2>Attacks in seven states (1996-2015)</h2>
-        <p>The line chart shows the most vulnerable seven states which easily become targets of terrorists in the past
-            20 years.
-            <br> As we can see from the line chart,
-            California was attacked more than 70 times in the past 20 years, while the total number of the U.S. is 495,
-            which ranks the first among all the states.
-            And it still has an upward trend in 2014 and 2015. And the other states with more than eight attacks in the
-            past twenty years are New York, Texas, Washington, Virginia,
-            D.C. and Missouri.These states may need a stronger protect and more efficient way to fight against
-            terrorism.</p>
-    </div>
-</div>
-
-<div class="row">
-    <div class="medium-7 columns medium-push-5">
-        <h2>Terrorist groups responsible for the U.S. attacks (1996-2015)</h2>
-        <p>
-            We analyzed attacks data of 1996 to 2015. Terrorist groups responsible for these attacks can be divided into
-            four types: US domestic terrorist groups, foreign terrorist
-            groups, unaffiliated individual(s) and unknown. As we can see from the bubble chart, among total 495 attacks
-            in the recent 20 years,
-            224 attacks are from the U.S. terrorist groups, while only 9 attacks are from foreign groups. That is why
-            CNN reported
-            "Every lethal terrorist attack in the United States in the past decade and a half has been carried out by
-            American citizens or legal permanent residents, operating either as lone wolves or in pairs, who have no
-            formal connections or training from terrorist organizations such as al Qaeda or ISIS."
-            Check the whole report here:
-            <a href="http://www.cnn.com/2016/06/12/opinions/orlando-homegrown-terror-bergen/">The real terror threat in
-                America is homegrown.</a>
-        </p>
-    </div>
-    <div class="medium-5 columns medium-pull-7">
-        <div id="bubble"></div>
-    </div>
-</div>
-
-<hr>
-
-<div class="row">
-    <div class="small-13 small-centered columns">
-        <h2>关于Pie Chart和Bar Chart的说明</h2>
-        <p>
-            在右侧的Bar上hover，显示该年份该类型的袭击一共多少起。点击Bar Chart右上角的颜色图例，左侧的Pie
-            Chart会更新成该类型的Weapon在这20年里的袭击目标分布（是20年的整体数据）。加载完页面还没进行任何点击的默认情况下，显示的是所有type的武器在20年里的袭击目标分布，换句话说，就是这20年里都有那些目标被袭击了多少次。
-            <br>这部分数据是为了显示不同的建筑应该重点防范哪些武器，比如接近一半的生化武器都被用在了袭击政府部门。
-            <br>两个图颜色比较灾难，审美好的可以改一改.......
-        </p>
-    </div>
-    <div class="medium-7 columns medium-push-5">
-        <div id="multi"></div>
-    </div>
-    <div class="medium-5 columns medium-pull-7">
-        <div id="pie">
-            <h3>Weapon Targets: </h3>
+        <div class="col-lg-8">
+            <div id="map"></div>
+            <hr>
+            <div class="row stats">
+                <div class="col-lg-3">20 Years</div>
+                <div class="col-lg-3">495 Attacks</div>
+                <div class="col-lg-3">282 Cities</div>
+                <div class="col-lg-3">3,152 Deaths</div>
+            </div>
+            <hr>
         </div>
     </div>
-</div>
+</section>
 
-<hr>
-
-
-<div class="row">
-    <div class="small-13 small-centered columns">
-        <h2>CONCLUSION</h2>
-        <p>This section is the conclusion of the project.</p>
+<!-- Details Section -->
+<section id="details" class="container content-section text-center">
+    <div class="row details-section">
+        <div class="col-lg-5">
+            <h2>Attacks in seven states</h2>
+            <p>The line chart shows the most vulnerable seven states which easily become targets of terrorists in the
+                past
+                20 years.
+                <br> As we can see from the line chart,
+                California was attacked more than 70 times in the past 20 years, while the total number of the U.S. is
+                495,
+                which ranks the first among all the states.
+                And it still has an upward trend in 2014 and 2015. And the other states with more than eight attacks in
+                the
+                past twenty years are New York, Texas, Washington, Virginia,
+                D.C. and Missouri. These states may need a stronger protect and more efficient way to fight against
+                terrorism.</p>
+        </div>
+        <div class="col-lg-7">
+            <div id="line"></div>
+        </div>
     </div>
-</div>
+    <div class="row details-section">
+        <div class="col-lg-5">
+            <div id="bubble"></div>
+        </div>
+        <div class="col-lg-7">
+            <h2>Terrorist groups responsible for the U.S. attacks (1996-2015)</h2>
+            <p>
+                We analyzed attacks data of 1996 to 2015. Terrorist groups responsible for these attacks can be divided
+                into
+                four types:
+                <br>1. US Domestic Terrorist Groups
+                <br>2. Foreign Terrorist Groups
+                <br>3. Unaffiliated Individual(s)
+                <br>4. Unknown.
+                <br>As we can see from the bubble chart, among total 495 attacks
+                in the recent 20 years,
+                224 attacks are from the U.S. terrorist groups, while only 9 attacks are from foreign groups. That is
+                why
+                CNN reported
+                "Every lethal terrorist attack in the United States in the past decade and a half has been carried out
+                by
+                American citizens or legal permanent residents, operating either as lone wolves or in pairs, who have no
+                formal connections or training from terrorist organizations such as al Qaeda or ISIS."
+                <br>Check the whole report here:
+                <a href="http://www.cnn.com/2016/06/12/opinions/orlando-homegrown-terror-bergen/">The real terror threat
+                    in
+                    America is homegrown.</a>
+            </p>
+        </div>
+    </div>
+    <div class="row details-section">
+        <div class="col-lg-12">
+            <h2>关于Pie Chart和Bar Chart的说明</h2>
+            <p>
+                在右侧的Bar上hover，显示该年份该类型的袭击一共多少起（这个功能现在不能用了不知道为什么，正在弄！！）。点击Bar Chart右上角的颜色图例，左侧的Pie
+                Chart会更新成该类型的Weapon在这20年里的袭击目标分布（是20年的整体数据）。加载完页面还没进行任何点击的默认情况下，显示的是所有type的武器在20年里的袭击目标分布，换句话说，就是这20年里都有那些目标被袭击了多少次。有一些数据可能会出乎意料，比如宗教和abortion相关的几乎构成被袭目标的1/3。
+                <br>这部分数据是为了显示不同的建筑应该重点防范哪些武器，以及那些武器应该被管制，以及因为这些袭击目标的指向性，从事恐怖活动的人群构成以及目的可能比一部分公众想象的更复杂一些。比如接近一半的生化武器都被用在了袭击政府部门，好奇葩啊。
+            </p>
+        </div>
+        <div class="col-lg-5">
+            <div id="pie"></div>
+        </div>
+        <div class="col-lg-7">
+            <div id="multi"></div>
+        </div>
 
-<hr>
+    </div>
+</section>
 
-<div class="row column">
-    <ul class="menu">
-        <li class="small-5 columns">Copyright © 各位的Github ID</li>
-        <li class="small-7 columns">Worcester Polytechnic Institute CS573 Spring 2017</li>
-    </ul>
-</div>
+<!-- Resources Section -->
+<section id="presentation" class="container content-section text-center">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2>PRESENTATION</h2>
+            <p>
+                视频预留位
+            </p>
+        </div>
+    </div>
+</section>
+
+
+<!-- Footer -->
+<footer>
+    <div class="container text-center">
+        <p>Copyright &copy; WPI CS573 Data Visualization 2017</p>
+    </div>
+</footer>
 
 
 <script>
@@ -336,14 +391,6 @@
 
 
     // overview
-    var svg_overview = d3.select("#overview")
-        .append("div")
-        .attr("id", "svg-container")
-        .append("svg")
-        .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
-        .attr("preserveAspectRatio", "xMinYMin meet")
-        .attr("viewBox", "0 0 " + ( width + margin.left + margin.right  ) + " " + ( height + margin.top + margin.bottom ))
-        .attr("id", "svg-content-responsive");
 
 
     // Map Chart Begins (By Jinyan Lyu)
@@ -376,7 +423,7 @@
     var g = svg_map.append("g")
         .style("stroke-width", "1.5px");
 
-    d3.json("us.json", function (error, us) {
+    d3.json("/data/us.json", function (error, us) {
         if (error) throw error;
 
         g.selectAll("path")
@@ -394,7 +441,7 @@
 
     });
 
-    d3.csv("dataset_format.csv", function (error, data) {
+    d3.csv("/data/dataset_format.csv", function (error, data) {
         data.forEach(function (d) {
             d.latitude = +d.latitude;
             d.longitude = +d.longitude;
@@ -464,6 +511,7 @@
     var svg_stackedBar = d3.select("#multi")
         .append("div")
         .attr("id", "svg-container")
+        .attr("style", "background-color: white; opacity: 0.9;")
         .attr("class", "svg-bar")
         .append("svg")
         .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
@@ -471,7 +519,7 @@
         .attr("viewBox", "0 0 " + ( width_bar + margin.left + margin.right  ) + " " + ( height_bar + margin.top + margin.bottom ))
         .attr("id", "svg-content-responsive");
 
-    d3.csv("weapon.csv", function (error, data) {
+    d3.csv("/data/weapon.csv", function (error, data) {
 
         data.forEach(function (d) {
             d.bioChe = +d.bioChe;
@@ -509,7 +557,8 @@
             })])
             .range([height_bar, 0]);
 
-        var colors = ["rgb(255,215, 15)", "rgb(255,187, 15)", "rgb(179,131, 12)", "rgb(179,106, 12)", "rgb(171,177, 11)", "rgb(109,130,61)", "rgb(100,100,100)"];
+        var colors = ["rgb(255,215, 15)", "rgb(255,187, 15)", "rgb(179,131, 12)", "rgb(179,106, 12)",
+            "rgb(171,177, 11)", "rgb(109,130,61)", "rgb(192,192,192)"];
 
         // Define and draw axes
         var yAxis = d3.svg.axis()
@@ -549,7 +598,7 @@
             })
             .enter()
             .append("rect")
-            .style("opacity", 1)
+            .style("opacity", 0.85)
             .attr("class", function (d) {
                 return d.weapon;
             })
@@ -597,7 +646,7 @@
             .attr("class", function (d, i) {
                 return class_stackedBar[i];
             })
-            .style("opacity", 0.99)
+            .style("opacity", 0.85)
             .style("fill", function (d, i) {
                 return colors.slice()[i];
             })
@@ -669,6 +718,7 @@
     var svg_pie = d3.select("div#pie")
         .append("div")
         .attr("id", "svg-container")
+        .attr("style", "background-color: white; opacity: 0.9;")
         .append("svg")
         .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
         .attr("preserveAspectRatio", "xMinYMin meet")
@@ -685,7 +735,7 @@
 
         dataset_pie = className;
 
-        d3.csv(dataset_pie + ".csv", function (error, data) {
+        d3.csv("/data/" + dataset_pie + ".csv", function (error, data) {
             if (error) {
                 return console.log(error);
             }
@@ -721,8 +771,9 @@
 
             function getColor(idx) {
                 var palette = [
-                    "#7c8a4f", "#7c8a4f", "#84541a", "#e7ad79", "#EB9419",
+                    "#7c8a4f", "#A55D35", "#84541a", "#e7ad79", "#EB9419",
                     "#f4e14b", "#3f4c08", "#FFB03B", "#468966", "#8C6934",
+                    "#7c8a4f", "#C0C0C0",
                 ]
                 return palette[idx % palette.length];
             }
@@ -731,7 +782,7 @@
                 .data(pieData)
                 .enter()
                 .append("path")
-                .style("opacity", 0.99)
+                .style("opacity", 0.75)
                 .attr("class", function (d) {
                     return d.data.targets;
                 })
@@ -746,7 +797,7 @@
                 .data(pieData)
                 .enter()
                 .append("path")
-                .style("opacity", 0.99)
+                .style("opacity", 0.75)
                 .attr("class", function (d) {
                     return d.data.targets;
                 })
@@ -836,7 +887,7 @@
         .style("font-size", "1em")
         .text("tooltip");
 
-    d3.csv("sheet3.csv", function (error, data) {
+    d3.csv("/data/sheet3.csv", function (error, data) {
 
         //convert numerical values from strings to numbers
         data = data.map(function (d) {
@@ -894,8 +945,8 @@
                 return d["Terrorist group type"];
             })
             .style({
-                "fill": "black",
-                "font-size": "1em"
+                "fill": "white",
+                "font-size": "1.25em"
             });
     })
 
@@ -910,7 +961,8 @@
 
     var svg_lineDiv = d3.select("#line")
         .append("div")
-        .attr("id", "svg-container");
+        .attr("id", "svg-container")
+        .attr("style", "background-color: white; opacity: 0.95;");
 
     var svg_line = svg_lineDiv.append("svg")
         .style("padding", marginRatio.top + " " + marginRatio.right + " " + marginRatio.bottom + " " + marginRatio.left)
@@ -961,7 +1013,7 @@
     }
 
     // import data and create chart
-    d3.csv('us1.csv',
+    d3.csv('/data/us1.csv',
         function (error, data) {
 
             var states = [
@@ -1184,14 +1236,19 @@
 
 </script>
 
+<!-- jQuery -->
+<script src="vendor/jquery/jquery.js"></script>
 
-<script src="jquery-2.1.4.min.js"></script>
-<script src="foundation.js"></script>
-<script>
-    $(document).foundation();
-</script>
+<!-- Bootstrap Core JavaScript -->
+<script src="vendor/bootstrap/js/bootstrap.min.js"></script>
+
+<!-- Plugin JavaScript -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+<!-- Theme JavaScript -->
+<script src="js/grayscale.min.js"></script>
+
+
 </body>
+
 </html>
-
-
-    
